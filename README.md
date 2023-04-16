@@ -2,7 +2,7 @@
 
 - **Framework**: [Next.js](https://nextjs.org/)
 - **Database**: [Neon Database](https://neon.tech/)
-- **Authentication**: [JSON Web Tokens](https://jwt.io)
+- **Authentication**: [Jose](https://www.npmjs.com/package/jose)
 - **Deployment**: [Vercel](https://vercel.com)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com)
 - **Query Builder**: [Kysely](https://kysely-org.github.io/kysely/)
