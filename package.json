@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
-    "jsonwebtoken": "^9.0.0",
+    "jose": "^4.14.0",
     "kysely": "^0.24.2",
     "kysely-neon": "^1.0.2",
     "next": "13.3.0",

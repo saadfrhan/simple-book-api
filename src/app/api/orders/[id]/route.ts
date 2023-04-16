@@ -3,7 +3,7 @@ import { db } from "../../db";
 import { Params } from "../../types";
 
 export async function GET(
-  _: NextResponse,
+  _: NextRequest,
   { params }: Params
 ) {
   const result = await db

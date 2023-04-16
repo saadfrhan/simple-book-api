@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
+import { verify } from './utils/jwt';
 
 const allowedOrigins = process.env.NODE_ENV === 'production'
   ? ['https://nextjs-books-api.com', "https://www.nextjs-books-api.com"]
@@ -25,7 +25,7 @@ export function middleware(request: NextRequest) {
     const token = authHeader.split('Bearer ')[1];
     if (token) {
       try {
-        const accessToken = jwt.verify(
+        const accessToken = verify(
           token,
           process.env.NEXT_PUBLIC_JWT_SECRET!
         );
