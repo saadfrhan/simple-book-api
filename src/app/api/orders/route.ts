@@ -1,8 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "../db";
+import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import { db, pool } from "../db";
 import { OrderRequest } from "../types";
 
-export async function GET(request: NextRequest) {
+export async function GET(
+  request: NextRequest,
+  event: NextFetchEvent
+) {
   const accessToken = request.headers.get('Authorization');
 
   if (!accessToken) {
@@ -17,10 +20,15 @@ export async function GET(request: NextRequest) {
     .where('created_by', '=', accessToken)
     .execute();
 
+  event.waitUntil(pool.end());
+
   return NextResponse.json(result)
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(
+  request: NextRequest,
+  event: NextFetchEvent
+) {
   const accessToken = request.headers.get('Authorization');
 
   if (!accessToken) {
@@ -55,7 +63,9 @@ export async function POST(request: NextRequest) {
       current_stock: bxp('current_stock', '-', 1)
     }))
     .where('id', '=', bookId)
-    .execute()
+    .execute();
+
+  event.waitUntil(pool.end());
 
   return NextResponse.json({
     created: true,

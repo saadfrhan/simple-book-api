@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "../db";
-import { BookFilterOptions } from "../types";
+import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import { db, pool } from "../db";
 
 export async function GET(
-  request: NextRequest
+  request: NextRequest,
+  event: NextFetchEvent
 ) {
 
   const searchParams = request.nextUrl.searchParams
@@ -49,6 +49,8 @@ export async function GET(
       ['id', 'name', 'type', 'available']
     )
     .execute();
+
+  event.waitUntil(pool.end())
 
   return NextResponse.json({ result });
 }

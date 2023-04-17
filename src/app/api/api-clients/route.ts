@@ -1,9 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "../db";
+import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import { db, pool } from "../db";
 import { User } from "../types";
 import { generateToken } from "../utils";
 
-export async function POST(request: NextRequest) {
+export async function POST(
+  request: NextRequest,
+  event: NextFetchEvent
+) {
   const user: User = await request.json()
 
   if (
@@ -32,6 +35,8 @@ export async function POST(request: NextRequest) {
     .values(user)
     .returning('id')
     .executeTakeFirstOrThrow()
+
+  event.waitUntil(pool.end());
 
   const accessToken = generateToken(user);
 

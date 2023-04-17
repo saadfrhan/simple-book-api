@@ -1,22 +1,11 @@
-import { Generated, Kysely, PostgresDialect } from "kysely";
-import { Pool } from "pg";
-import { Book, Order, User } from "./types";
+import { Kysely, PostgresDialect } from "kysely";
+import { Pool } from "@neondatabase/serverless";
+import { DB } from 'kysely-codegen';
 
-interface ID {
-  id: Generated<number>;
-}
+export const pool = new Pool({
+  connectionString: process.env.DATABASE_URL
+})
 
-interface Database {
-  books: Book & ID;
-  orders: Order & ID;
-  users: User & ID;
-}
-
-export const db = new Kysely<Database>({
-  dialect: new PostgresDialect({
-    pool: new Pool({
-      ssl: true,
-      connectionString: process.env.NEXT_PUBLIC_NEON_DATABASE_URI!
-    })
-  })
+export const db = new Kysely<DB>({
+  dialect: new PostgresDialect({ pool })
 })

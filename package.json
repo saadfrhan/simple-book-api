@@ -9,33 +9,28 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.3.0",
     "gray-matter": "^4.0.3",
     "jose": "^4.14.0",
     "kysely": "^0.24.2",
-    "kysely-neon": "^1.0.2",
     "next": "13.3.0",
     "pg": "^8.10.0",
-    "pg-native": "^3.0.1",
-    "postgres": "^3.3.4",
-    "prismjs": "^1.29.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "remark": "^14.0.2",
     "remark-html": "^15.0.2",
-    "typescript": "5.0.4",
-    "ws": "^8.13.0"
+    "typescript": "5.0.4"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
-    "@types/jsonwebtoken": "^9.0.1",
     "@types/node": "18.15.11",
     "@types/pg": "^8.6.6",
-    "@types/prismjs": "^1.26.0",
     "@types/react": "18.0.35",
     "@types/react-dom": "18.0.11",
     "autoprefixer": "^10.4.14",
     "eslint": "8.38.0",
     "eslint-config-next": "13.3.0",
+    "kysely-codegen": "^0.10.0",
     "postcss": "^8.4.21",
     "tailwindcss": "^3.3.1"
   }
