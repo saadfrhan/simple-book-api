@@ -10,6 +10,14 @@ module.exports = {
           css: {
             h1: {
               margin: 0
+            },
+            h2: {
+              marginTop: '1em',
+              marginBottom: '0.5em'
+            },
+            h3: {
+              marginTop: '0.8em',
+              marginBottom: '0.3em'
             }
           },
         },
