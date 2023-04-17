@@ -1,20 +1,18 @@
-import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
-import { db, pool } from "../../db";
-import { Params } from "../../types";
+import { NextRequest, NextResponse } from "next/server";
+import { Book, Params } from "../../types";
+import sql from "../../db";
 
-export async function GET(
-  _: NextRequest,
-  event: NextFetchEvent,
-  { params }: Params
-) {
+export async function GET(_: NextRequest, { params }: Params) {
+  try {
+    const result = await sql<Book[]>`
+      SELECT * FROM "books"
+      WHERE "id" = ${params.id}
+    `;
+    return NextResponse.json({ result });
+  } catch (error) {
+    return NextResponse.json({
+      error: error instanceof Error ? error : error
+    })
+  }
 
-  const result = await db
-    .selectFrom('books')
-    .selectAll()
-    .where('id', '=', params.id)
-    .execute();
-
-  event.waitUntil(pool.end());
-
-  return NextResponse.json({ result });
 }

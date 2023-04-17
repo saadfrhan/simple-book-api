@@ -1,11 +1,11 @@
-import { Kysely, PostgresDialect } from "kysely";
-import { Pool } from "@neondatabase/serverless";
-import { DB } from 'kysely-codegen';
+import postgres from "postgres";
 
-export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-})
+const sql = postgres({
+  user: process.env.PGUSER,
+  pass: process.env.PGPASSWORD,
+  database: process.env.PGDATABASE,
+  host: process.env.PGHOST,
+  ssl: "allow",
+});
 
-export const db = new Kysely<DB>({
-  dialect: new PostgresDialect({ pool })
-})
+export default sql;

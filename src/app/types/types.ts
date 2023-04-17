@@ -1,5 +1,4 @@
 export interface Book {
-  id: number;
   name: string;
   type: string;
   available: boolean;
@@ -15,7 +14,6 @@ export interface User {
 }
 
 export interface Order {
-  id: number;
   book_id: number;
   customer_name: string;
   quantity: number;
@@ -32,4 +30,9 @@ export interface Params {
   params: {
     id: number
   }
+}
+
+export interface BookFilterOptions {
+  type: 'Fiction' | 'Non-Fiction';
+  limit: number;
 }

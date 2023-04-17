@@ -1,61 +1,83 @@
-import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
-import { db, pool } from "../../db";
-import { Params } from "../../types";
+import { NextRequest, NextResponse } from "next/server";
+import sql from "../../db";
+import { Order, Params } from "../../types";
 
-export async function GET(
-  _: NextRequest,
-  event: NextFetchEvent,
-  { params }: Params
-) {
-  const result = await db
-    .selectFrom('orders')
-    .selectAll()
-    .where('id', '=', params.id)
-    .execute();
+export async function GET(request: NextRequest, { params }: Params) {
+  const accessToken = request.headers.get('Authorization');
 
-  event.waitUntil(pool.end());
+  if (!accessToken) {
+    return NextResponse.json({
+      error: 'Authentication token required!'
+    })
+  }
 
-  return new NextResponse(JSON.stringify(result));
+  try {
+    const result = await sql<Order[]>`
+      SELECT * FROM "orders"
+      WHERE "id" = ${params.id} AND "created_by" = ${accessToken} 
+    `;
+    return NextResponse.json({ result });
+  } catch (error) {
+    return NextResponse.json({
+      message: `Either the order doesn't exist or you are not the owner of it.`,
+      error: error instanceof Error ? error : error
+    })
+  }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  event: NextFetchEvent,
-  { params }: Params) {
+export async function PATCH(request: NextRequest, { params }: Params) {
   const { customer_name }: { customer_name: string } = await request.json();
 
-  const { id } = await db
-    .updateTable('orders')
-    .set({
-      customer_name
+  const accessToken = request.headers.get('Authorization');
+
+  if (!accessToken) {
+    return NextResponse.json({
+      error: 'Authentication token required!'
     })
-    .where('id', '=', params.id)
-    .returning('id')
-    .executeTakeFirstOrThrow();
+  }
 
-  event.waitUntil(pool.end());
-
-  return NextResponse.json({
-    updated: true,
-    order_id: id
-  })
+  try {
+    const confirm = await sql<{ id: number }[]>`
+      UPDATE "orders"
+      SET "customer_name" = ${customer_name}
+      WHERE "id" = ${params.id} AND "created_by" = ${accessToken}
+      RETURNING "id"
+    `
+    return NextResponse.json({
+      updated: true,
+      order_id: confirm[0].id
+    })
+  } catch (error) {
+    return NextResponse.json({
+      message: `Either the order doesn't exist or you are not the owner of it.`,
+      error: error instanceof Error ? error : error
+    })
+  }
 }
 
-export async function DELETE(
-  _: NextRequest,
-  event: NextFetchEvent,
-  { params }: Params
-) {
-  const { id } = await db
-    .deleteFrom('orders')
-    .where('id', '=', params.id)
-    .returning('id')
-    .executeTakeFirstOrThrow();
+export async function DELETE(request: NextRequest, { params }: Params) {
+  const accessToken = request.headers.get('Authorization');
 
-  event.waitUntil(pool.end());
+  if (!accessToken) {
+    return NextResponse.json({
+      message: 'Authentication token required!'
+    })
+  }
 
-  return NextResponse.json({
-    deleted: true,
-    order_id: id
-  })
+  try {
+    const confirm = await sql<{ id: number }[]>`
+      DELETE FROM "orders"
+      WHERE "id" = ${params.id} AND "created_by" = ${accessToken}
+      RETURNING "id"
+    `;
+    return NextResponse.json({
+      deleted: true,
+      order_id: confirm[0].id || null
+    })
+  } catch (error) {
+    return NextResponse.json({
+      message: `Either the order doesn't exist or you are not the owner of it.`,
+      error: error instanceof Error ? error : error
+    })
+  }
 }

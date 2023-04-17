@@ -4,11 +4,11 @@
 
 ### List of books ###
 
-GET `/books`
+GET `/api/books`
 Returns a list of books.
 Optional query parameters:
 - type: fiction or non-fiction
-- limit: a number between 1 and 20.
+- limit: a number
 
 #### Example Response ####
 ```json
@@ -25,7 +25,7 @@ Optional query parameters:
 
 ### Get a single book ###
 
-GET `/books/:id`
+GET `/api/books/:id`
 Retrieve detailed information about a book.
 
 #### Example Response ####
@@ -48,7 +48,7 @@ Retrieve detailed information about a book.
 
 ### Submit an order ###
 
-POST `/orders`
+POST `/api/orders`
 Allows you to submit a new order. Requires authentication.
 The request body needs to be in JSON format and include the following properties:
 
@@ -57,7 +57,7 @@ The request body needs to be in JSON format and include the following properties
 
 #### Example Request ####
 ```
-POST /orders/
+POST /orders
 Authorization: Bearer <YOUR TOKEN>
 
 {
@@ -68,17 +68,15 @@ Authorization: Bearer <YOUR TOKEN>
 
 #### Example Response ####
 ```json
-[
-  {
-    "created": true,
-    "order_id": 4
-  }
-]
+{
+  "created": true,
+  "order_id": 4
+}
 ```
 
 ### Get all orders ###
 
-GET `/orders`
+GET `/api/orders`
 Allows you to view all orders. Requires authentication.
 
 #### Example Response ####
@@ -86,6 +84,7 @@ Allows you to view all orders. Requires authentication.
 ```json
 [
   {
+    "id": 1,
     "book_id": 1,
     "customer_name": "Saad",
     "quantity": 1,
@@ -97,7 +96,7 @@ Allows you to view all orders. Requires authentication.
 
 ### Get an order ###
 
-GET `/orders/:id`
+GET `/api/orders/:id`
 Allows you to view an existing order. Requires authentication.
 
 #### Example Response ####
@@ -105,6 +104,7 @@ Allows you to view an existing order. Requires authentication.
 ```json
 [
   {
+    "id": 1,
     "book_id": 1,
     "customer_name": "Saad",
     "quantity": 1,
@@ -116,7 +116,7 @@ Allows you to view an existing order. Requires authentication.
 
 ### Update an order ###
 
-PATCH `/orders/:id`
+PATCH `/api/orders/:id`
 Update an existing order. Requires authentication.
 The request body needs to be in JSON format and allows you to update the following properties:
 
@@ -124,7 +124,7 @@ The request body needs to be in JSON format and allows you to update the followi
 
 #### Example Request ####
 ```
-PATCH /orders/PF6MflPDcuhWobZcgmJy5
+PATCH /orders/5
 Authorization: Bearer <YOUR TOKEN>
 
 {
@@ -132,23 +132,39 @@ Authorization: Bearer <YOUR TOKEN>
 }
 ```
 
+#### Example Response ####
+```json
+{
+  "updated": true,
+  "order_id": 5
+}
+```
+
 ### Delete an order ###
 
-DELETE `/orders/:orderId`
+DELETE `/api/orders/:id`
 Delete an existing order. Requires authentication.
 The request body needs to be empty.
 
 #### Example Request ####
 ```
-DELETE /orders/PF6MflPDcuhWobZcgmJy5
+DELETE /orders/5
 Authorization: Bearer <YOUR TOKEN>
+```
+
+#### Example Response ####
+```json
+{
+  "deleted": true,
+  "order_id": 5
+}
 ```
 
 ## API Authentication ##
 
 To submit or view an order, you need to register your API client.
 
-POST `/api-clients/`
+POST `/api/api-clients/`
 The request body needs to be in JSON format and include the following properties:
 
  - `client_name` - String
@@ -165,9 +181,23 @@ The request body needs to be in JSON format and include the following properties
 #### Example Response ####
 The response body will contain the access token. The access token is valid for 7 days.
 ```json
-[
-  {
-    "accessToken": "<accessToken>"
+{
+  "accessToken": "<accessToken>"
+}
+```
+
+GET `/api/api-clients/:token`
+
+#### Example Response ####
+The response body will contain the access token. The access token is valid for 7 days.
+```json
+{
+  "user": {
+    "client_name": "Saad",
+    "client_email": "saad@fdgdemail.com",
+    "customer_name": "Saad",
+    "book_id": 1,
+    "iat": 1681706242
   }
-]
+}
 ```

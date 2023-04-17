@@ -1,10 +1,8 @@
-import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
-import { db, pool } from "../db";
+import { NextRequest, NextResponse } from "next/server";
+import sql from "../db";
+import { Book } from "../types";
 
-export async function GET(
-  request: NextRequest,
-  event: NextFetchEvent
-) {
+export async function GET(request: NextRequest) {
 
   const searchParams = request.nextUrl.searchParams
 
@@ -12,45 +10,61 @@ export async function GET(
   const limit = searchParams.get('limit');
 
   if (type && !limit) {
-    const result = await db
-      .selectFrom('books')
-      .select(
-        ['id', 'name', 'type', 'available']
-      ).where('type', '=', type)
-      .execute()
-    return NextResponse.json({ result });
+    const result = await sql<Book[]>`
+      SELECT
+        "id",
+        "name",
+        "type",
+        "available"
+      FROM
+        "books"
+      WHERE
+        "type" = ${type}
+    `
+    return NextResponse.json({ result })
   }
 
   if (limit && !type) {
-    const result = await db
-      .selectFrom('books')
-      .select(
-        ['id', 'name', 'type', 'available']
-      ).limit(Number(limit))
-      .execute()
+    const result = await sql<Book[]>`
+      SELECT
+        "id",
+        "name",
+        "type",
+        "available"
+      FROM
+        "books"
+      LIMIT
+        ${limit}
+    `
     return NextResponse.json({ result })
   }
 
   if (limit && type) {
-    const result = await db
-      .selectFrom('books')
-      .select(
-        ['id', 'name', 'type', 'available']
-      )
-      .where('type', '=', type)
-      .limit(Number(limit))
-      .execute()
+    const result = await sql<Book[]>`
+      SELECT
+        "id",
+        "name",
+        "type",
+        "available"
+      FROM
+        "books"
+      WHERE
+        "type" = ${type}
+      LIMIT
+        ${limit}
+    `
     return NextResponse.json({ result })
   }
 
-  const result = await db
-    .selectFrom('books')
-    .select(
-      ['id', 'name', 'type', 'available']
-    )
-    .execute();
-
-  event.waitUntil(pool.end())
+  const result = await sql<Book[]>`
+      SELECT
+        "id",
+        "name",
+        "type",
+        "available"
+      FROM
+        "books"
+    `
 
   return NextResponse.json({ result });
 }

@@ -1,12 +1,9 @@
-import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
-import { db, pool } from "../db";
+import { NextRequest, NextResponse } from "next/server";
 import { User } from "../types";
 import { generateToken } from "../utils";
+import sql from "../db";
 
-export async function POST(
-  request: NextRequest,
-  event: NextFetchEvent
-) {
+export async function POST(request: NextRequest) {
   const user: User = await request.json()
 
   if (
@@ -18,11 +15,10 @@ export async function POST(
     })
   }
 
-  const isExist = await db
-    .selectFrom('users')
-    .selectAll()
-    .where('client_email', '=', user.client_email)
-    .execute()
+  const isExist = await sql<(User & { id: number })[]>`
+    SELECT * FROM users 
+    WHERE client_email = ${user.client_email}
+  `
 
   if (isExist.length > 0) {
     return NextResponse.json({
@@ -30,13 +26,10 @@ export async function POST(
     })
   }
 
-  await db
-    .insertInto('users')
-    .values(user)
-    .returning('id')
-    .executeTakeFirstOrThrow()
-
-  event.waitUntil(pool.end());
+  await sql`
+    INSERT INTO users (client_email, client_name) 
+    VALUES (${user.client_email}, ${user.client_name})
+  `
 
   const accessToken = generateToken(user);
 

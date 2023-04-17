@@ -1,11 +1,8 @@
-import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
-import { db, pool } from "../db";
-import { OrderRequest } from "../types";
+import { NextRequest, NextResponse } from "next/server";
+import sql from "../db";
+import { Order, OrderRequest } from "../types";
 
-export async function GET(
-  request: NextRequest,
-  event: NextFetchEvent
-) {
+export async function GET(request: NextRequest) {
   const accessToken = request.headers.get('Authorization');
 
   if (!accessToken) {
@@ -14,21 +11,22 @@ export async function GET(
     })
   }
 
-  const result = await db
-    .selectFrom('orders')
-    .selectAll()
-    .where('created_by', '=', accessToken)
-    .execute();
+  try {
+    const result = await sql<Order[]>`
+      SELECT * FROM "orders"
+      WHERE "created_by" = ${accessToken}
+    `
+    return NextResponse.json(result)
 
-  event.waitUntil(pool.end());
-
-  return NextResponse.json(result)
+  } catch (error) {
+    return NextResponse.json({
+      message: 'Either you had passed incorrect accessToken or there is some error.',
+      error: error instanceof Error ? error : error
+    })
+  }
 }
 
-export async function POST(
-  request: NextRequest,
-  event: NextFetchEvent
-) {
+export async function POST(request: NextRequest) {
   const accessToken = request.headers.get('Authorization');
 
   if (!accessToken) {
@@ -45,30 +43,38 @@ export async function POST(
     })
   }
 
-  const { id, book_id: bookId } = await db.
-    insertInto('orders')
-    .values({
-      book_id,
-      customer_name,
-      created_by: accessToken,
-      quantity: 1,
-      timestamp: new Date()
+  try {
+    const [{ id }] = await sql<{ id: number }[]>`
+      INSERT INTO
+      "orders" (
+        "book_id",
+        "customer_name",
+        "created_by",
+        "quantity",
+        "timestamp"
+      )
+      VALUES
+        (${book_id}, ${customer_name}, ${accessToken}, 1, ${new Date().getTime()})
+      RETURNING
+        "id"
+    `
+
+    await sql`
+      UPDATE "books"
+      SET "current_stock" = "current_stock" - $1
+      WHERE "id" = ${book_id}
+    `
+
+    return NextResponse.json({
+      created: true,
+      order_id: id
     })
-    .returning(['id', 'book_id'])
-    .executeTakeFirstOrThrow()
+  } catch (error) {
+    return NextResponse.json({
+      message: 'Either you had passed incorrect accessToken/book_id or there is some error.',
+      error: error instanceof Error ? error : error
+    })
+  }
 
-  await db
-    .updateTable('books')
-    .set(({ bxp }) => ({
-      current_stock: bxp('current_stock', '-', 1)
-    }))
-    .where('id', '=', bookId)
-    .execute();
 
-  event.waitUntil(pool.end());
-
-  return NextResponse.json({
-    created: true,
-    order_id: id
-  })
 }

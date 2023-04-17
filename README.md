@@ -5,7 +5,7 @@
 - **Authentication**: [Jose](https://www.npmjs.com/package/jose)
 - **Deployment**: [Vercel](https://vercel.com)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com)
-- **Query Builder**: [Kysely](https://kysely-org.github.io/kysely/)
+- **Database Client**: [Postgres.js](https://github.com/porsager/postgres)
 
 ## Running Locally
 
