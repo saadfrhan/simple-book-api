@@ -1,4 +1,4 @@
-# Simple Book API #
+# Book API #
 
 ## Books
 
@@ -164,6 +164,8 @@ Authorization: Bearer <YOUR TOKEN>
 
 To submit or view an order, you need to register your API client.
 
+### Register Client ###
+
 POST `/api/api-clients/`
 The request body needs to be in JSON format and include the following properties:
 
@@ -185,6 +187,8 @@ The response body will contain the access token. The access token is valid for 7
   "accessToken": "<accessToken>"
 }
 ```
+
+### Get Client Information ###
 
 GET `/api/api-clients/:token`
 

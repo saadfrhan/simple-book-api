@@ -7,7 +7,7 @@ export default async function Home() {
   } = await generateHTML('api//doc');
 
   return <div
-    className='p-3 pt-5 md:pt-10 font-mono prose-h1:m-0 prose-h2:mt-[1em] w-full max-w-4xl mx-auto prose prose-slate'
+    className='px-3 py-5 md:py-10 w-full max-w-3xl mx-auto prose prose-slate'
   >
     <div
       className='prose prose-slate'
