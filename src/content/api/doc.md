@@ -152,6 +152,7 @@ Authorization: Bearer <YOUR TOKEN>
 
 DELETE `/api/orders/:id`
 Delete an existing order. Requires authentication.
+
 The request body needs to be empty.
 
 #### Example Request ####
