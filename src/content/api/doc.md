@@ -5,6 +5,7 @@
 ### List of books ###
 
 GET `/api/books`
+
 Returns a list of books.
 Optional query parameters:
 - type: fiction or non-fiction
@@ -26,6 +27,7 @@ Optional query parameters:
 ### Get a single book ###
 
 GET `/api/books/:id`
+
 Retrieve detailed information about a book.
 
 #### Example Response ####
@@ -49,7 +51,9 @@ Retrieve detailed information about a book.
 ### Submit an order ###
 
 POST `/api/orders`
+
 Allows you to submit a new order. Requires authentication.
+
 The request body needs to be in JSON format and include the following properties:
 
  - `book_id` - Integer - Required
@@ -77,6 +81,7 @@ Authorization: Bearer <YOUR TOKEN>
 ### Get all orders ###
 
 GET `/api/orders`
+
 Allows you to view all orders. Requires authentication.
 
 #### Example Response ####
@@ -97,6 +102,7 @@ Allows you to view all orders. Requires authentication.
 ### Get an order ###
 
 GET `/api/orders/:id`
+
 Allows you to view an existing order. Requires authentication.
 
 #### Example Response ####
@@ -117,7 +123,9 @@ Allows you to view an existing order. Requires authentication.
 ### Update an order ###
 
 PATCH `/api/orders/:id`
+
 Update an existing order. Requires authentication.
+
 The request body needs to be in JSON format and allows you to update the following properties:
 
  - `customer_name` - String
@@ -167,6 +175,7 @@ To submit or view an order, you need to register your API client.
 ### Register Client ###
 
 POST `/api/api-clients/`
+
 The request body needs to be in JSON format and include the following properties:
 
  - `client_name` - String
