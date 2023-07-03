@@ -22,7 +22,7 @@
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
     "@types/jsonwebtoken": "^9.0.1",
-    "@types/node": "18.15.11",
+    "@types/node": "20.3.3",
     "@types/pg": "^8.6.6",
     "@types/react": "18.0.35",
     "@types/react-dom": "18.0.11",
